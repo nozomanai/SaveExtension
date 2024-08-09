@@ -2,6 +2,8 @@
 
 #include "SlotInfo.h"
 
+#include "FileAdapter.h"
+
 #include <EngineUtils.h>
 #include <IImageWrapper.h>
 #include <IImageWrapperModule.h>

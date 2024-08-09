@@ -115,7 +115,17 @@ protected:
 	void PrepareLevel(const ULevel* Level, FLevelRecord& LevelRecord);
 
 	/** Deserializes all Level actors. */
-	inline void DeserializeLevel_Actor(AActor* const Actor, const FLevelRecord& LevelRecord, const FSELevelFilter& Filter);
+	FORCEINLINE void DeserializeLevel_Actor(AActor* const Actor, const FLevelRecord& LevelRecord, const FSELevelFilter& Filter)
+	{
+		TRACE_CPUPROFILER_EVENT_SCOPE(USlotDataTask_Loader::DeserializeLevel_Actor);
+
+		// Find the record
+		const FActorRecord* const Record = LevelRecord.Actors.FindByKey(Actor);
+		if (Record && Record->IsValid() && Record->Class == Actor->GetClass())
+		{
+			DeserializeActor(Actor, *Record, Filter);
+		}
+	}
 
 	void FindNextAsyncLevel(ULevelStreaming*& OutLevelStreaming) const;
 

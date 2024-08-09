@@ -275,7 +275,7 @@ void USlotDataTask_Loader::DeserializeLevelSync(const ULevel* Level, const ULeve
 
 		for (auto ActorItr = Level->Actors.CreateConstIterator(); ActorItr; ++ActorItr)
 		{
-			auto* Actor = *ActorItr;
+			AActor* Actor = *ActorItr;
 			if (IsValid(Actor) && Filter.ShouldSave(Actor))
 			{
 				DeserializeLevel_Actor(Actor, *LevelRecord, Filter);
@@ -316,7 +316,7 @@ void USlotDataTask_Loader::DeserializeLevelASync(ULevel* Level, ULevelStreaming*
 
 	// Copy actors array. New actors won't be considered for deserialization
 	CurrentLevelActors.Empty(Level->Actors.Num());
-	for (auto* Actor : Level->Actors)
+	for (TObjectPtr<AActor>& Actor : Level->Actors)
 	{
 		if(IsValid(Actor))
 		{
@@ -470,18 +470,6 @@ void USlotDataTask_Loader::RespawnActors(const TArray<FActorRecord*>& Records, c
 
 		// We update the name on the record in case it changed
 		Record->Name = NewActor->GetFName();
-	}
-}
-
-void USlotDataTask_Loader::DeserializeLevel_Actor(AActor* const Actor, const FLevelRecord& LevelRecord, const FSELevelFilter& Filter)
-{
-	TRACE_CPUPROFILER_EVENT_SCOPE(USlotDataTask_Loader::DeserializeLevel_Actor);
-
-	// Find the record
-	const FActorRecord* const Record = LevelRecord.Actors.FindByKey(Actor);
-	if (Record && Record->IsValid() && Record->Class == Actor->GetClass())
-	{
-		DeserializeActor(Actor, *Record, Filter);
 	}
 }
 
